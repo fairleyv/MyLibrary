@@ -1,7 +1,7 @@
 const typeDefs = `
     type Book {
         _id: ID!
-        authors: [type: String]
+        authors: [String]
         description: String
         bookId: String
         image: String
@@ -22,12 +22,12 @@ const typeDefs = `
     }
 
     type Query {
-        book: [Book]
-        user(username: String!): [User]
+        book(title: String, ): [Book]
+        user(username: String!): User
     }
 
     type Mutation {
-        getSingleUser(_id: String!): User
+        getSingleUser(username: String!): User
         createUser(username: String!, email:String!, password: String!): Auth
         login(email: String!, password: String!): Auth
         saveBook(_id: String!, bookId: string! ): User
