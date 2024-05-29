@@ -4,9 +4,10 @@ const {signToken, AuthenticationError} = require ('../utils/auth');
 const resolvers = {
     Query: {
         user: async (parent, {username}, context) => {
-            const user = User.findOne({ $or: [{username}, {_id: username}]}).populate('savedBooks');
-            return user;
-
+            if (context.user) {
+                return User.findOne({ $or: [{username}, {_id: username}]}).populate('savedBooks');
+            }
+            throw AuthenticationError;
         },      
     },
     Mutation: {
@@ -33,17 +34,23 @@ const resolvers = {
             return { token, user };
         },
         saveBook: async (parent, {username}, context) => {
-            await User.findOneAndUpdate(
-                {$or: [{username}, {_id:username}]},
-                {$addToSet: {savedBooks: bookId}}
-            );
+            if (context.user) {
+               return User.findOneAndUpdate(
+                    {$or: [{username}, {_id:username}]},
+                    {$addToSet: {savedBooks: bookId}}
+                );
+            } 
+            throw AuthenticationError;
         },
         deleteBook: async (parent, {username}, context) => {
-            await User.findOneAndUpdate(
-                {$or: [{username}, {_id:username}]},
-                {$pull: {savedBooks: bookId}},
-                {new: true}
-            );
+            if (context.user) {
+                return User.findOneAndUpdate(
+                   {$or: [{username}, {_id:username}]},
+                   {$pull: {savedBooks: bookId}},
+                   {new: true}
+               );
+            }
+            throw AuthenticationError;
         },
     },
 };
