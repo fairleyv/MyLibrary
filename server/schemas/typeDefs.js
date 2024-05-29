@@ -29,8 +29,8 @@ const typeDefs = `
         getSingleUser(username: String, _id: String): User
         createUser(username: String!, email:String!, password: String!): Auth
         login(email: String!, password: String!): Auth
-        saveBook(username: String, _id: String, bookId: string! ): User
-        deleteBook(_id: String!, bookId: string!): User
+        saveBook(username: String, _id: String, bookId: String! ): User
+        deleteBook(_id: String!, bookId: String!): User
     }
     `;
 
