@@ -3,12 +3,9 @@ const {signToken, AuthenticationError} = require ('../utils/auth');
 
 const resolvers = {
     Query: {
-        user: async (parent, {username}, context) => {
-            if (context.user) {
+        user: async (parent, {username}) => {
                 return User.findOne({ $or: [{username}, {_id: username}]}).populate('savedBooks');
-            }
-            throw AuthenticationError;
-        },      
+  
     },
     Mutation: {
         createUser: async (parent, {username, email, password }) => {
