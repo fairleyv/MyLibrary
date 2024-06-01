@@ -6,7 +6,17 @@ const resolvers = {
         user: async (parent, {username}) => {
             const user = await User.findOne({ $or: [{username}, {_id: username}]}).populate('savedBooks');
             return user;
-        },      
+        }, 
+        searchBooks: async (_, { query }) => {
+            const response = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+            return response.data.items.map(book => ({
+                id: book.id,
+                title: book.volumeInfo.title,
+                authors: book.volumeInfo.authors || ['No author to display'],
+                description: book.volumeInfo.description,
+                image: book.volumeInfo.imageLinks?.thumbnail || '',
+            }));
+        },
     },
     Mutation: {
         createUser: async (parent, {username, email, password }) => {
