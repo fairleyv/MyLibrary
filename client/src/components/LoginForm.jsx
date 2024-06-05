@@ -1,14 +1,16 @@
-// see SignupForm.js for comments
-import { useState } from 'react';
+// src/pages/LoginForm.js
+import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-
-import { loginUser } from '../utils/API';
+import { useMutation } from '@apollo/client';
+import { LOGIN } from '../utils/mutations';
 import Auth from '../utils/auth';
 
 const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  
+  const [login, { data, loading, error }] = useMutation(LOGIN);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -26,13 +28,21 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await loginUser(userFormData);
+      const { data } = await login({
+        variables: { ...userFormData },
+      });
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      console.log(data.login);
 
-      const { token, user } = await response.json();
+      if (data && data.login) {
+      console.log(data.login);
+      // Handle successful creation, e.g., redirect or show success message
+    } else {
+      // Handle case when data or createUser is not available
+      console.error("Error: login mutation returned invalid data");
+    }
+
+      const { token, user } = data.login;
       console.log(user);
       Auth.login(token);
     } catch (err) {
@@ -41,7 +51,6 @@ const LoginForm = () => {
     }
 
     setUserFormData({
-      username: '',
       email: '',
       password: '',
     });
@@ -81,10 +90,12 @@ const LoginForm = () => {
         <Button
           disabled={!(userFormData.email && userFormData.password)}
           type='submit'
-          variant='success'>
-          Submit
+          variant='success'
+        >
+          {loading ? 'Logging in...' : 'Submit'}
         </Button>
       </Form>
+      {error && <p className="text-danger">Error logging in: {error.message}</p>}
     </>
   );
 };

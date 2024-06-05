@@ -11,6 +11,9 @@ const PORT = process.env.PORT || 3001;
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  dataSources: () => ({
+    googleBooksAPI: new GoogleBooksAPI(),
+  }),
 });
 
 const startApolloServer = async () => {

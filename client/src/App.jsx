@@ -13,8 +13,7 @@ function App() {
     <ApolloProvider client = {client}>
       <Navbar />
       <Outlet />
-    </ApolloProvider>,
-    document.getElementById('root')
+    </ApolloProvider>
   );
 }
 
