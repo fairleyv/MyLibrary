@@ -20,6 +20,8 @@ const SearchBooks = () => {
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
 
+  const[searchGoogleBooks] = useQuery(SEARCH_BOOKS);
+
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
   const [saveBook] = useMutation(SAVE_BOOK);
