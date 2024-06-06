@@ -6,8 +6,11 @@ const resolvers = {
         user: async (parent, {username}) => {
             const user = await User.findOne({ $or: [{username}, {_id: username}]}).populate('savedBooks');
             return user;
-        },      
+        }, 
+        searchBooks: (_, { query }, { dataSources }) =>
+            dataSources.googleBooksAPI.searchBooks(query),
     },
+
     Mutation: {
         createUser: async (parent, {username, email, password }) => {
             const user = await User.create({username, email, password});
