@@ -9,8 +9,8 @@ import {
 } from 'react-bootstrap';
 
 import Auth from '../utils/auth';
-import { useQuery, useMutation } from '@apollo/client';
-import {SEARCH_BOOKS} from '../utils/queries';
+import { useLazyQuery, useMutation } from '@apollo/client';
+import {SEARCH_BOOKS, GET_ME} from '../utils/queries';
 import {SAVE_BOOK} from '../utils/mutations';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
@@ -20,7 +20,8 @@ const SearchBooks = () => {
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
 
-  const {loading, error, data} = useQuery(SEARCH_BOOKS, {
+  
+    const  {error, data} = useLazyQuery(SEARCH_BOOKS, {
     variables: { query: searchInput}
   });
 
@@ -55,12 +56,12 @@ const SearchBooks = () => {
     }
 
     try {
-      const {loading, error, data} = await searchGoogleBooks(
-        {variables: { query: searchInput}
-      });
+      
 
       if (error) {
-        throw new Error('something went wrong!');
+        console.error('Error fetching data:', error);
+
+        return;
       }
 
       const bookData = data.searchBooks.map((book) => ({
@@ -130,7 +131,7 @@ const SearchBooks = () => {
 
       <Container>
          <h2 className='pt-5'>
-          {loading ? 'Loading...' : (searchedBooks.length
+          {(searchedBooks.length
             ? `Viewing ${searchedBooks.length} results:`
             : 'Search for a book to begin')}
         </h2>
